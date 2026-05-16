@@ -55,7 +55,8 @@ $user_role    = $_SESSION['role'] ?? null;
                 <?php if ($user_role === 'admin'): ?>
                     <li><a href="admin_dashboard.php">Admin</a></li>
                 <?php else: ?>
-                    <li><a href="user_dashboard.php">Profili Im</a></li>
+                    <li><a href="user_dashboard.php">Paneli</a></li>
+                    <li><a href="profile.php">Profili</a></li>
                 <?php endif; ?>
                 <li><a href="logout.php">Dil</a></li>
             <?php else: ?>

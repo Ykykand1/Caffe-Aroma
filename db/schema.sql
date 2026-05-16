@@ -50,6 +50,19 @@ CREATE TABLE IF NOT EXISTS order_items (
     FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
 );
 
+CREATE TABLE IF NOT EXISTS reviews (
+    id         INT AUTO_INCREMENT PRIMARY KEY,
+    user_id    INT     NOT NULL,
+    product_id INT     NOT NULL,
+    rating     TINYINT NOT NULL,
+    comment    TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE KEY one_review_per_user (user_id, product_id),
+    CONSTRAINT chk_rating CHECK (rating BETWEEN 1 AND 5),
+    FOREIGN KEY (user_id)    REFERENCES users(id)    ON DELETE CASCADE,
+    FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
+);
+
 -- ----------------------------------------------------------------
 -- Default admin account  (password: admin123)
 -- ----------------------------------------------------------------
