@@ -21,24 +21,38 @@ $user_id = $_SESSION['user_id'];
 
 try {
     $pdo->beginTransaction();
-    
+
+    // Fetch real prices from DB — never trust client-sent prices
+    $product_ids = array_map(fn($item) => (int)$item['id'], $cart);
+    $placeholders = implode(',', array_fill(0, count($product_ids), '?'));
+    $price_stmt = $pdo->prepare("SELECT id, price FROM products WHERE id IN ($placeholders)");
+    $price_stmt->execute($product_ids);
+    $db_prices = $price_stmt->fetchAll(PDO::FETCH_KEY_PAIR); // [id => price]
+
     $total_amount = 0;
     foreach ($cart as $item) {
-        $total_amount += $item['price'] * $item['quantity'];
+        $id = (int)$item['id'];
+        if (!isset($db_prices[$id])) {
+            $pdo->rollBack();
+            echo json_encode(['success' => false, 'error' => 'Produkt i pavlefshëm në shportë.']);
+            exit;
+        }
+        $total_amount += $db_prices[$id] * (int)$item['quantity'];
     }
-    
+
     $stmt = $pdo->prepare("INSERT INTO orders (user_id, total_amount, status) VALUES (?, ?, 'pending')");
     $stmt->execute([$user_id, $total_amount]);
     $order_id = $pdo->lastInsertId();
-    
+
     $item_stmt = $pdo->prepare("INSERT INTO order_items (order_id, product_id, quantity, price) VALUES (?, ?, ?, ?)");
     foreach ($cart as $item) {
-        $item_stmt->execute([$order_id, $item['id'], $item['quantity'], $item['price']]);
+        $id = (int)$item['id'];
+        $item_stmt->execute([$order_id, $id, (int)$item['quantity'], $db_prices[$id]]);
     }
-    
+
     $pdo->commit();
     echo json_encode(['success' => true]);
 } catch (Exception $e) {
     $pdo->rollBack();
-    echo json_encode(['success' => false, 'error' => 'Database error: ' . $e->getMessage()]);
+    echo json_encode(['success' => false, 'error' => 'Gabim në bazën e të dhënave: ' . $e->getMessage()]);
 }
