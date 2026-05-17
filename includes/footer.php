@@ -32,5 +32,15 @@
 </footer>
 
 <script src="../assets/js/animations.js"></script>
+<?php if (!empty($_SESSION['flash'])):
+    $flash = $_SESSION['flash'];
+    unset($_SESSION['flash']);
+?>
+<script>
+document.addEventListener('DOMContentLoaded', () =>
+    showToast(<?= json_encode($flash['message']) ?>, <?= json_encode($flash['type']) ?>)
+);
+</script>
+<?php endif; ?>
 </body>
 </html>

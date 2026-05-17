@@ -2,25 +2,35 @@
 require_once '../includes/auth_check.php';
 require_login();
 require_once '../db/db_connect.php';
+require_once '../includes/csrf.php';
 
-$error   = '';
-$success = '';
+$error = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $date   = $_POST['date'];
-    $time   = $_POST['time'];
-    $guests = (int)$_POST['guests'];
+    csrf_verify();
+
+    $date    = $_POST['date']   ?? '';
+    $time    = $_POST['time']   ?? '';
+    $guests  = (int)($_POST['guests'] ?? 0);
+    $phone   = trim($_POST['phone']   ?? '');
+
+    $phone_regex = '/^(\+355|0)[0-9]{8,9}$/';
 
     if (empty($date) || empty($time) || $guests < 1) {
-        $error = 'Ju lutemi plotësoni të gjitha fushat saktë.';
+        $error = 'Ju lutemi plotësoni të gjitha fushat e detyrueshme.';
+    } elseif ($phone !== '' && !preg_match($phone_regex, $phone)) {
+        $error = 'Numri i telefonit duhet të jetë në formatin +355XXXXXXXXX ose 0XXXXXXXXX.';
     } else {
         $stmt = $pdo->prepare(
-            "INSERT INTO reservations (user_id, reservation_date, reservation_time, guests) VALUES (?, ?, ?, ?)"
+            "INSERT INTO reservations (user_id, reservation_date, reservation_time, guests, phone)
+             VALUES (?, ?, ?, ?, ?)"
         );
-        if ($stmt->execute([$_SESSION['user_id'], $date, $time, $guests])) {
-            $success = 'Rezervimi u krye me sukses! Ju presim me padurim.';
+        if ($stmt->execute([$_SESSION['user_id'], $date, $time, $guests, $phone ?: null])) {
+            set_flash('Rezervimi u krye me sukses! Ju presim me padurim.');
+            header('Location: reservations.php');
+            exit;
         } else {
-            $error = 'Rezervimi dështoi. Ju lutemi provoni përsëri.';
+            $error = 'Rezervimi dështoi. Provoni përsëri.';
         }
     }
 }
@@ -36,24 +46,35 @@ include '../includes/header.php';
         </p>
 
         <?php if ($error): ?>
-            <div class="alert alert-error"><?= htmlspecialchars($error) ?></div>
-        <?php endif; ?>
-        <?php if ($success): ?>
-            <div class="alert alert-success"><?= htmlspecialchars($success) ?></div>
+        <script>document.addEventListener('DOMContentLoaded',()=>showToast(<?=json_encode($error)?>,'error'));</script>
         <?php endif; ?>
 
         <form method="POST" action="reservations.php">
+            <?= csrf_field() ?>
             <div class="form-group">
                 <label>Data</label>
-                <input type="date" name="date" required min="<?= date('Y-m-d') ?>">
+                <input type="date" name="date"
+                       value="<?= htmlspecialchars($_POST['date'] ?? '') ?>"
+                       required min="<?= date('Y-m-d') ?>">
             </div>
             <div class="form-group">
                 <label>Ora</label>
-                <input type="time" name="time" required min="08:00" max="22:00">
+                <input type="time" name="time"
+                       value="<?= htmlspecialchars($_POST['time'] ?? '') ?>"
+                       required min="08:00" max="22:00">
             </div>
             <div class="form-group">
                 <label>Numri i Personave</label>
-                <input type="number" name="guests" min="1" max="20" required value="2">
+                <input type="number" name="guests" min="1" max="20" required
+                       value="<?= (int)($_POST['guests'] ?? 2) ?>">
+            </div>
+            <div class="form-group">
+                <label>Numri i Telefonit <span style="color:var(--text-mid); font-weight:400;">(opcionale)</span></label>
+                <input type="tel" name="phone"
+                       value="<?= htmlspecialchars($_POST['phone'] ?? '') ?>"
+                       placeholder="+355 6X XXX XXXX"
+                       pattern="(\+355|0)[0-9]{8,9}"
+                       autocomplete="tel">
             </div>
             <button type="submit" class="btn" style="width:100%;">Konfirmo Rezervimin</button>
         </form>

@@ -1,8 +1,11 @@
 <?php
 session_start();
 require_once '../db/db_connect.php';
+require_once '../includes/csrf.php';
 
 header('Content-Type: application/json');
+
+csrf_header_verify();
 
 if (!isset($_SESSION['user_id'])) {
     echo json_encode(['success' => false, 'error' => 'Not logged in.']);

@@ -6,6 +6,7 @@ CREATE TABLE IF NOT EXISTS users (
     username   VARCHAR(50)  NOT NULL UNIQUE,
     email      VARCHAR(100) NOT NULL UNIQUE,
     password   VARCHAR(255) NOT NULL,
+    phone      VARCHAR(20)  DEFAULT NULL,
     role       ENUM('user','admin') DEFAULT 'user',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -26,9 +27,17 @@ CREATE TABLE IF NOT EXISTS reservations (
     reservation_date DATE NOT NULL,
     reservation_time TIME NOT NULL,
     guests           INT  NOT NULL,
+    phone            VARCHAR(20) DEFAULT NULL,
     status           ENUM('pending','confirmed','cancelled') DEFAULT 'pending',
     created_at       TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS login_attempts (
+    ip_address   VARCHAR(45) NOT NULL,
+    attempts     TINYINT     NOT NULL DEFAULT 1,
+    last_attempt TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (ip_address)
 );
 
 CREATE TABLE IF NOT EXISTS orders (

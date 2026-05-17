@@ -2,6 +2,7 @@
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
+require_once __DIR__ . '/csrf.php';
 $is_logged_in = isset($_SESSION['user_id']);
 $user_role    = $_SESSION['role'] ?? null;
 ?>
@@ -18,6 +19,7 @@ $user_role    = $_SESSION['role'] ?? null;
     <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;1,9..144,300;1,9..144,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
 
     <link rel="stylesheet" href="../assets/css/style.css">
+    <meta name="csrf-token" content="<?= htmlspecialchars(csrf_token()) ?>">
 </head>
 <body>
 

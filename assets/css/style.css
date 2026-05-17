@@ -916,6 +916,43 @@ tr:hover td { background: #faf8f5; }
 }
 
 /* ============================================================
+   TOAST NOTIFICATIONS
+   ============================================================ */
+#toast-container {
+  position: fixed;
+  top: 1.5rem;
+  right: 1.5rem;
+  z-index: 5000;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  max-width: 360px;
+  pointer-events: none;
+}
+.toast {
+  background: white;
+  border-radius: var(--radius-sm);
+  padding: 0.9rem 1.25rem;
+  box-shadow: 0 8px 32px rgba(42,24,16,0.18);
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.9rem;
+  font-family: 'DM Sans', sans-serif;
+  color: var(--coffee);
+  border-left: 3px solid var(--orange);
+  pointer-events: all;
+  transform: translateX(calc(100% + 2rem));
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1),
+              opacity  0.3s ease;
+  opacity: 0;
+}
+.toast.show      { transform: translateX(0); opacity: 1; }
+.toast-success   { border-color: #27ae60; }
+.toast-error     { border-color: #c0392b; }
+.toast-icon      { font-size: 1.1rem; flex-shrink: 0; }
+
+/* ============================================================
    MODAL
    ============================================================ */
 .modal-overlay {

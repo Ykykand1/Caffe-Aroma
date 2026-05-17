@@ -88,6 +88,34 @@
   }
 
   /* ----------------------------------------------------------
+     TOAST NOTIFICATIONS
+  ---------------------------------------------------------- */
+  window.showToast = function (message, type = 'success', duration = 4500) {
+    let container = document.getElementById('toast-container');
+    if (!container) {
+      container = document.createElement('div');
+      container.id = 'toast-container';
+      document.body.appendChild(container);
+    }
+
+    const icons = { success: '✓', error: '✕', info: 'ℹ' };
+    const toast = document.createElement('div');
+    toast.className = `toast toast-${type}`;
+    toast.innerHTML =
+      `<span class="toast-icon">${icons[type] ?? '•'}</span><span>${message}</span>`;
+    container.appendChild(toast);
+
+    // Trigger animation on next frame
+    requestAnimationFrame(() => requestAnimationFrame(() => toast.classList.add('show')));
+
+    setTimeout(() => {
+      toast.classList.remove('show');
+      toast.style.opacity = '0';
+      setTimeout(() => toast.remove(), 350);
+    }, duration);
+  };
+
+  /* ----------------------------------------------------------
      ACTIVE NAV LINK (highlight current page)
   ---------------------------------------------------------- */
   const currentPath = window.location.pathname.split('/').pop();

@@ -206,10 +206,14 @@ $logged_in = isset($_SESSION['user_id']);
         msgEl.textContent  = 'Duke dërguar...';
         msgEl.style.color  = 'var(--text-mid)';
 
+        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content ?? '';
         try {
             const res  = await fetch('../api/reviews.php', {
                 method:  'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-Token': csrfToken,
+                },
                 body:    JSON.stringify({
                     product_id: parseInt(currentId),
                     rating:     parseInt(rating),
