@@ -2,6 +2,12 @@
 require_once '../db/db_connect.php';
 include '../includes/header.php';
 
+// Ensure session is started and determine login state
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+$is_logged_in = isset($_SESSION['user_id']) && !empty($_SESSION['user_id']);
+
 $products = $pdo->query("SELECT * FROM products ORDER BY category, name")->fetchAll();
 
 // Aggregate ratings per product
