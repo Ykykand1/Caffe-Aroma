@@ -67,7 +67,7 @@ $featured = $pdo->query("SELECT * FROM products ORDER BY id LIMIT 3")->fetchAll(
         </div>
         <div class="about-text fade-up fade-up-d2">
             <span class="section-eyebrow">Rreth Nesh</span>
-            <h2 class="section-title">Kafja si art,<br>atmoshfera si shtëpi</h2>
+            <h2 class="section-title">Kafja si art,<br>atmosfera si shtëpi</h2>
             <p>
                 Caffè Aroma lindi nga një ëndërr e thjeshtë: të krijojmë hapësirën
                 perfekte ku kafja e mirë takon njerëzit e mirë. Që nga viti 2010,

@@ -69,7 +69,7 @@ include '../includes/header.php';
                        value="<?= (int)($_POST['guests'] ?? 2) ?>">
             </div>
             <div class="form-group">
-                <label>Numri i Telefonit <span style="color:var(--text-mid); font-weight:400;">(opcionale)</span></label>
+                <label>Numri i Telefonit <span style="color:var(--text-mid); font-weight:400;">(opsionale)</span></label>
                 <input type="tel" name="phone"
                        value="<?= htmlspecialchars($_POST['phone'] ?? '') ?>"
                        placeholder="+355 6X XXX XXXX"

@@ -69,7 +69,7 @@ include '../includes/header.php';
                        required autocomplete="email">
             </div>
             <div class="form-group">
-                <label for="phone">Numri i Telefonit <span style="color:var(--text-mid); font-weight:400;">(opcionale)</span></label>
+                <label for="phone">Numri i Telefonit <span style="color:var(--text-mid); font-weight:400;">(opsionale)</span></label>
                 <input type="tel" id="phone" name="phone"
                        value="<?= htmlspecialchars($_POST['phone'] ?? '') ?>"
                        placeholder="+355 6X XXX XXXX"

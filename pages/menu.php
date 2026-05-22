@@ -2,7 +2,7 @@
 require_once '../db/db_connect.php';
 include '../includes/header.php';
 
-// Ensure session is started and determine login state
+
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
@@ -10,12 +10,12 @@ $is_logged_in = isset($_SESSION['user_id']) && !empty($_SESSION['user_id']);
 
 $products = $pdo->query("SELECT * FROM products ORDER BY category, name")->fetchAll();
 
-// Aggregate ratings per product
+
 $ratings_raw = $pdo->query(
     "SELECT product_id, ROUND(AVG(rating),1) AS avg, COUNT(*) AS cnt FROM reviews GROUP BY product_id"
 )->fetchAll(PDO::FETCH_KEY_PAIR | PDO::FETCH_UNIQUE);
 
-// Rebuild as [product_id => ['avg' => x, 'cnt' => y]]
+
 $ratings_stmt = $pdo->query(
     "SELECT product_id, ROUND(AVG(rating),1) AS avg_r, COUNT(*) AS cnt FROM reviews GROUP BY product_id"
 );
@@ -134,7 +134,7 @@ $logged_in = isset($_SESSION['user_id']);
         <p class="section-eyebrow" id="review-category" style="margin-bottom:0.25rem;"></p>
         <h3 class="modal-title" id="modal-title">Lë Vlerësim</h3>
         <p class="text-mid" style="font-size:0.9rem; margin-bottom:0.5rem;">
-            Zgjidhni numrin e yjeve dhe lini një koment (opcionale).
+            Zgjidhni numrin e yjeve dhe lini një koment (opsionale).
         </p>
 
         <div class="star-picker">
